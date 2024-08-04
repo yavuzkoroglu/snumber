@@ -80,3 +80,6 @@ dkms.conf
 # PADKIT
 padkit/**
 padkit
+
+# Log Files
+log.txt

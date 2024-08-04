@@ -1,4 +1,5 @@
 #include <inttypes.h>
+#include "padkit/repeat.h"
 #include "padkit/stack.h"
 
 #define MIN_DIGITS  2
@@ -17,12 +18,19 @@ typedef struct SplitBody {
 } Split;
 
 static uint32_t countDigits(uint64_t x) {
-    uint32_t count = 0;
+    uint32_t count = 1;
+    x /= 10;
     while (x > 0) {
-        x /= 10;
         count++;
+        x /= 10;
     }
     return count;
+}
+
+static uint64_t concat(uint64_t a, uint64_t b) {
+    uint32_t nDigits = countDigits(b);
+    REPEAT(nDigits) a *= 10;
+    return a + b;
 }
 
 int main(int argc, char* argv[]) {
@@ -59,11 +67,13 @@ int main(int argc, char* argv[]) {
             DEBUG_ASSERT(MIN_SLOTS <= split->nSlots && split->nSlots <= MAX_SLOTS)
 
             if (split->sum == x) {
-                printf("√%"PRIu64" = %"PRIu64, (s=x*x), split->slots[split->nSlots - 1]);
-                for (uint64_t slotId = split->nSlots - 2; slotId != UINT64_MAX; slotId--) {
-                    printf(" + %"PRIu64, split->slots[slotId]);
-                }
-                puts("");
+                #ifndef NDEBUG
+                    printf("√%"PRIu64" = %"PRIu64, (s=x*x), split->slots[split->nSlots - 1]);
+                    for (uint64_t slotId = split->nSlots - 2; slotId != UINT64_MAX; slotId--) {
+                        printf(" + %"PRIu64, split->slots[slotId]);
+                    }
+                    puts("");
+                #endif
                 t += s;
                 break;
             } else if (split->sum < x && split->nSlots > MIN_SLOTS) {
@@ -76,7 +86,7 @@ int main(int argc, char* argv[]) {
                     nextSplit->nSlots = oldSplit->nSlots - 1;
                     for (uint64_t i = 0, j = 0; i < oldSplit->nSlots && j < nextSplit->nSlots; i++, j++) {
                         if (i == pairId) {
-                            nextSplit->sum += (nextSplit->slots[j] = oldSplit->slots[i] + 10 * oldSplit->slots[i + 1]);
+                            nextSplit->sum += (nextSplit->slots[j] = concat(oldSplit->slots[i + 1], oldSplit->slots[i]));
                             i++;
                         } else {
                             nextSplit->sum += (nextSplit->slots[j] = oldSplit->slots[i]);
