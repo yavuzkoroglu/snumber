@@ -8,7 +8,6 @@
 #define MIN_SLOTS   MIN_DIGITS
 #define MAX_SLOTS   MAX_DIGITS
 
-#define MIN_SPLITS  1
 #define MAX_SPLITS  ((uint32_t)1 << (MAX_DIGITS - 1)) - 1
 
 typedef struct SplitBody {
@@ -18,17 +17,16 @@ typedef struct SplitBody {
 } Split;
 
 static uint32_t countDigits(uint64_t x) {
-    uint32_t count = 1;
-    x /= 10;
-    while (x > 0) {
-        count++;
+    uint32_t count = 0;
+    do {
         x /= 10;
-    }
+        count++;
+    } while (x > 0);
     return count;
 }
 
 static uint64_t concat(uint64_t a, uint64_t b) {
-    uint32_t nDigits = countDigits(b);
+    uint32_t const nDigits = countDigits(b);
     REPEAT(nDigits) a *= 10;
     return a + b;
 }
@@ -39,7 +37,6 @@ int main(int argc, char* argv[]) {
         printf(" Usage: %s <N>\n\n", argv[0]);
         return EXIT_SUCCESS;
     }
-
     uint64_t max_s;
     if (sscanf(argv[1], "%"SCNu64, &max_s) != 1) {
         printf(" N must be a positive integer!\n\n");
@@ -67,13 +64,11 @@ int main(int argc, char* argv[]) {
             DEBUG_ASSERT(MIN_SLOTS <= split->nSlots && split->nSlots <= MAX_SLOTS)
 
             if (split->sum == x) {
-                #ifndef NDEBUG
-                    printf("√%"PRIu64" = %"PRIu64, (s=x*x), split->slots[split->nSlots - 1]);
-                    for (uint64_t slotId = split->nSlots - 2; slotId != UINT64_MAX; slotId--) {
-                        printf(" + %"PRIu64, split->slots[slotId]);
-                    }
-                    puts("");
-                #endif
+                printf("√%"PRIu64" = %"PRIu64, (s=x*x), split->slots[split->nSlots - 1]);
+                for (uint64_t slotId = split->nSlots - 2; slotId != UINT64_MAX; slotId--) {
+                    printf(" + %"PRIu64, split->slots[slotId]);
+                }
+                puts("");
                 t += s;
                 break;
             } else if (split->sum < x && split->nSlots > MIN_SLOTS) {
@@ -95,6 +90,8 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+
+        FLUSH_STACK(splits)
     }
 
     FREE_STACK(splits)
