@@ -1,6 +1,6 @@
 CC=clang
 
-all: bin/snumber
+all: clean bin/snumber
 
 .PHONY: all clean
 
@@ -13,4 +13,4 @@ bin/snumber:		\
 	src/snumber.c	\
 	; ${CC} -std=c99 -Ofast -DNDEBUG -Weverything ${SILENCED_WARNINGS} src/snumber.c -o bin/snumber
 
-clean: ; rm -rf obj bin
+clean: ; rm -rf bin
