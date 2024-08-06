@@ -1,42 +1,27 @@
-include padkit/compile.mk
-
-INCLUDES=-Iinclude -Ipadkit/include
 OBJECTS=obj/snumber.o
-MODE=release
+CC=cc
 
 all: bin/snumber
 
-.PHONY: all clean cleanobjects cleanpadkit documentation objects
+.PHONY: all clean cleanobjects cleanpadkit objects
 
 bin: ; mkdir bin
 
-bin/snumber:                      		\
-    bin                                 \
-    objects                             \
-    padkit/compile.mk                   \
-	; ${COMPILE} ${OBJECTS} -o bin/snumber
+SILENCED_WARNINGS=-Wno-nullability-completeness
 
-clean: ; rm -rf obj bin padkit *.gcno *.gcda *.gcov html latex
+bin/snumber:	\
+    bin   		\
+    objects		\
+	; ${CC} -std=c99 -Ofast -DNDEBUG -Wall -Wextra ${SILENCED_WARNINGS} ${OBJECTS} -o bin/snumber
 
-cleanlibpadkit: ; rm -rf padkit/obj padkit/lib/libpadkit.a
+clean: ; rm -rf obj bin
 
 cleanobjects: ; rm -rf obj
 
-documentation: ; doxygen
-
 obj: ; mkdir obj
 
-obj/snumber.o: obj           			\
-    padkit/include/padkit/repeat.h      \
-    src/snumber.c                 		\
-    ; ${COMPILE} ${INCLUDES} src/snumber.c -c -o obj/snumber.o
+obj/snumber.o: obj	\
+    src/snumber.c   \
+    ; ${CC} -std=c99 -Ofast -DNDEBUG -Wall -Wextra ${SILENCED_WARNINGS} src/snumber.c -c -o obj/snumber.o
 
 objects: cleanobjects ${OBJECTS}
-
-padkit: ; git clone https://github.com/yavuzkoroglu/padkit.git
-
-padkit/compile.mk: padkit; $(make padkit/compile.mk)
-
-padkit/include/padkit.h: padkit; make -C padkit include/padkit.h
-
-padkit/lib/libpadkit.a: cleanlibpadkit padkit; make -C padkit lib/libpadkit.a

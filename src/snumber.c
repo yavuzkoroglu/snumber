@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "padkit/repeat.h"
 
 #define MIN_DIGITS  2
 #define MAX_DIGITS  20
@@ -52,11 +51,9 @@ static void constructInitial_split(Split* const split, int const nDigits) {
 }
 
 static int countDigits(uint64_t x) {
-    int count = 0;
-    do {
-        x /= 10;
+    int count = 1;
+    while (x >= pow_ten[count])
         count++;
-    } while (x > 0);
     return count;
 }
 
