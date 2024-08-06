@@ -85,9 +85,8 @@ static uint64_t sumSplit(Split const* const split, uint64_t s) {
 }
 
 int main(int argc, char* argv[]) {
-    uint64_t max_s;
+    uint64_t s, max_s;
     uint64_t t = 0;
-    uint64_t s;
     SplitStack* const stack = malloc(sizeof(SplitStack));
 
     puts("");
