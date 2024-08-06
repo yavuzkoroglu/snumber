@@ -9,19 +9,19 @@ An S-number is a perfect square whose root could be found by splitting it into s
 
 ### Examples
 
-81 is an S-number because 81 = 9^2 = (8 + 1)^2
+81 is an S-number because 81 = 9<sup>2</sup> = (8 + 1)<sup>2</sup>
 
-100 is an S-number because 100 = 10^2 = (10 + 0)^2
+100 is an S-number because 100 = 10<sup>2</sup> = (10 + 0)<sup>2</sup>
 
-6724 is an S-number because 6724 = 82^2 = (6 + 72 + 4)^2
+6724 is an S-number because 6724 = 82<sup>2</sup> = (6 + 72 + 4)<sup>2</sup>
 
-8281 is an S-number because 8281 = 91^2 = (82 + 8 + 2)^2
+8281 is an S-number because 8281 = 91<sup>2</sup> = (82 + 8 + 2)<sup>2</sup>
 
-9801 is an S-number because 9801 = 99^2 = (98 + 0 + 1)^2
+9801 is an S-number because 9801 = 99<sup>2</sup> = (98 + 0 + 1)<sup>2</sup>
 
 ### The Question
 
-Let T(N) be the sum of all S-numbers up to N. T(10^(12)) = ? 
+Let T(N) be the sum of all S-numbers up to N. T(10<sup>12</sup>) = ? 
 
 ### The Answer
 
@@ -31,11 +31,11 @@ This implementation proved to be too slow to compute the answer.
 
 ```make```
 
-## Example Run at N = 10^4
+## Example Run at N = 10<sup>4</sup>
 
 ```bin/snumbers 10000```
 
-## The Output at N = 10^4
+## The Output at N = 10<sup>4</sup>
 
 ```
 

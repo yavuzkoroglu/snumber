@@ -102,7 +102,16 @@ int main(int argc, char* argv[]) {
                 Split oldSplit[1];
                 memcpy(oldSplit, split, sizeof(Split));
 
-                for (int pairId = 0; pairId < oldSplit->nSlots - 1; pairId++) {
+                int largestSlotValue    = oldSplit->slots[0];
+                int largestSlotId       = 0;
+                for (int slotId = 1; slotId < oldSplit->nSlots; slotId++)
+                    if (largestSlotValue <= oldSplit->slots[slotId])
+                        largestSlotValue = oldSplit->slots[(largestSlotId = slotId)];
+
+                if (largestSlotValue == 1)
+                    largestSlotId = 0;
+
+                for (int pairId = largestSlotId; pairId < oldSplit->nSlots - 1; pairId++) {
                     Split* const nextSplit = stack->splits + stack->nSplits++;
 
                     memcpy(nextSplit, oldSplit, sizeof(Split));
