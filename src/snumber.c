@@ -12,6 +12,29 @@
 
 #define MAX_SPLITS  (1 << (MAX_DIGITS - 1)) - 1
 
+static uint64_t const pow_ten[MAX_DIGITS] = {
+    1ULL,                   /* 10^0 */
+    10ULL,                  /* 10^1 */
+    100ULL,                 /* 10^2 */
+    1000ULL,                /* 10^3 */
+    10000ULL,               /* 10^4 */
+    100000ULL,              /* 10^5 */
+    1000000ULL,             /* 10^6 */
+    10000000ULL,            /* 10^7 */
+    100000000ULL,           /* 10^8 */
+    1000000000ULL,          /* 10^9 */
+    10000000000ULL,         /* 10^10 */
+    100000000000ULL,        /* 10^11 */
+    1000000000000ULL,       /* 10^12 */
+    10000000000000ULL,      /* 10^13 */
+    100000000000000ULL,     /* 10^14 */
+    1000000000000000ULL,    /* 10^15 */
+    10000000000000000ULL,   /* 10^16 */
+    100000000000000000ULL,  /* 10^17 */
+    1000000000000000000ULL, /* 10^18 */
+    10000000000000000000ULL /* 10^19 */
+};
+
 typedef struct SplitBody {
     int nSlots;
     int slots[MAX_SLOTS];
@@ -37,16 +60,14 @@ static int countDigits(uint64_t x) {
     return count;
 }
 
-static void dumpProof(uint64_t s, uint64_t const x, Split const* const split, int const nDigits) {
+static void dumpProof(uint64_t s, uint64_t const x, Split const* const split, int nDigits) {
     printf("√%"PRIu64" = %"PRIu64" = ", s, x);
 
-    uint64_t base = 1;
-    REPEAT(nDigits) base *= 10;
-    REPEAT(split->slots[split->nSlots - 1]) base /= 10;
+    uint64_t base = pow_ten[(nDigits -= split->slots[split->nSlots - 1])];
     printf("%.*"PRIu64, split->slots[split->nSlots - 1], s / base);
     s %= base;
     for (int slotId = split->nSlots - 2; slotId >= 0; slotId--) {
-        REPEAT(split->slots[slotId]) base /= 10;
+        base = pow_ten[(nDigits -= split->slots[slotId])];
         printf(" + %.*"PRIu64, split->slots[slotId], s / base);
         s %= base;
     }
@@ -56,8 +77,7 @@ static void dumpProof(uint64_t s, uint64_t const x, Split const* const split, in
 static uint64_t sumSplit(Split const* const split, uint64_t s) {
     uint64_t sum = 0;
     for (int slotId = 0; slotId < split->nSlots; slotId++) {
-        uint64_t base = 1;
-        REPEAT(split->slots[slotId]) base *= 10;
+        uint64_t const base = pow_ten[split->slots[slotId]];
         sum += s % base;
         s /= base;
     }

@@ -27,7 +27,7 @@ documentation: ; doxygen
 obj: ; mkdir obj
 
 obj/snumber.o: obj           			\
-    padkit/include/padkit/debug.h       \
+    padkit/include/padkit/repeat.h      \
     src/snumber.c                 		\
     ; ${COMPILE} ${INCLUDES} src/snumber.c -c -o obj/snumber.o
 
