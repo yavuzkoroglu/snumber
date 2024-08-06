@@ -119,20 +119,14 @@ int main(int argc, char* argv[]) {
                 t += s;
                 break;
             } else if (sum < x && split->nSlots > MIN_SLOTS) {
-                int largestSlotValue;
-                int largestSlotId;
+                int largestSlotValue    = 1;
+                int largestSlotId       = 0;
                 Split oldSplit[1];
                 memcpy(oldSplit, split, sizeof(Split));
 
-                largestSlotValue    = oldSplit->slots[0];
-                largestSlotId       = 0;
-
-                for (int slotId = 1; slotId < oldSplit->nSlots; slotId++)
-                    if (largestSlotValue <= oldSplit->slots[slotId])
+                for (int slotId = oldSplit->nSlots - 1; slotId >= 0; slotId--)
+                    if (largestSlotValue < oldSplit->slots[slotId])
                         largestSlotValue = oldSplit->slots[(largestSlotId = slotId)];
-
-                if (largestSlotValue == 1)
-                    largestSlotId = 0;
 
                 for (int pairId = largestSlotId; pairId < oldSplit->nSlots - 1; pairId++) {
                     Split* const nextSplit = stack->splits + stack->nSplits++;
