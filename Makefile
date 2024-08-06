@@ -1,27 +1,16 @@
-OBJECTS=obj/snumber.o
-CC=cc
+CC=clang
 
 all: bin/snumber
 
-.PHONY: all clean cleanobjects cleanpadkit objects
+.PHONY: all clean
 
 bin: ; mkdir bin
 
-SILENCED_WARNINGS=-Wno-nullability-completeness
+SILENCED_WARNINGS=-Wno-nullability-completeness -Wno-unsafe-buffer-usage
 
-bin/snumber:	\
-    bin   		\
-    objects		\
-	; ${CC} -std=c99 -Ofast -DNDEBUG -Wall -Wextra ${SILENCED_WARNINGS} ${OBJECTS} -o bin/snumber
+bin/snumber:		\
+    bin   			\
+	src/snumber.c	\
+	; ${CC} -std=c99 -Ofast -DNDEBUG -Weverything ${SILENCED_WARNINGS} src/snumber.c -o bin/snumber
 
 clean: ; rm -rf obj bin
-
-cleanobjects: ; rm -rf obj
-
-obj: ; mkdir obj
-
-obj/snumber.o: obj	\
-    src/snumber.c   \
-    ; ${CC} -std=c99 -Ofast -DNDEBUG -Wall -Wextra ${SILENCED_WARNINGS} src/snumber.c -c -o obj/snumber.o
-
-objects: cleanobjects ${OBJECTS}

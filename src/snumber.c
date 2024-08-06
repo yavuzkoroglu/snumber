@@ -85,25 +85,26 @@ static uint64_t sumSplit(Split const* const split, uint64_t s) {
 }
 
 int main(int argc, char* argv[]) {
-    puts("");
-    if (argc < 2) {
-        printf(" Usage: %s <N>\n\n", argv[0]);
-        return EXIT_SUCCESS;
-    }
     uint64_t max_s;
-    if (sscanf(argv[1], "%"SCNu64, &max_s) != 1) {
-        printf(" N must be a positive integer!\n\n");
-        return EXIT_SUCCESS;
-    }
-
+    uint64_t t = 0;
+    uint64_t s;
     SplitStack* const stack = malloc(sizeof(SplitStack));
+
+    puts("");
     if (stack == NULL) {
         fputs("malloc() error\n\n", stderr);
         return EXIT_FAILURE;
     }
 
-    uint64_t t = 0;
-    uint64_t s;
+    if (argc < 2) {
+        printf(" Usage: %s <N>\n\n", argv[0]);
+        return EXIT_SUCCESS;
+    }
+    if (sscanf(argv[1], "%"SCNu64, &max_s) != 1) {
+        printf(" N must be a positive integer!\n\n");
+        return EXIT_SUCCESS;
+    }
+
     for (uint64_t x = 4; (s = x*x) <= max_s; x++) {
         int const nDigits = countDigits(s);
 
@@ -119,11 +120,14 @@ int main(int argc, char* argv[]) {
                 t += s;
                 break;
             } else if (sum < x && split->nSlots > MIN_SLOTS) {
+                int largestSlotValue;
+                int largestSlotId;
                 Split oldSplit[1];
                 memcpy(oldSplit, split, sizeof(Split));
 
-                int largestSlotValue    = oldSplit->slots[0];
-                int largestSlotId       = 0;
+                largestSlotValue    = oldSplit->slots[0];
+                largestSlotId       = 0;
+
                 for (int slotId = 1; slotId < oldSplit->nSlots; slotId++)
                     if (largestSlotValue <= oldSplit->slots[slotId])
                         largestSlotValue = oldSplit->slots[(largestSlotId = slotId)];
