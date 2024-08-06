@@ -29,7 +29,7 @@ This implementation proved to be too slow to compute the answer.
 
 ## How to Build
 
-```make -e MODE=release```
+```make```
 
 ## Example Run at N = 10^4
 
@@ -39,15 +39,15 @@ This implementation proved to be too slow to compute the answer.
 
 ```
 
-√81 = 8 + 1
-√100 = 10 + 0
-√1296 = 1 + 29 + 6
-√2025 = 20 + 25
-√3025 = 30 + 25
-√6724 = 6 + 72 + 4
-√8281 = 82 + 8 + 1
-√9801 = 98 + 0 + 1
-√10000 = 100 + 0 + 0
+√81 = 9 = 8 + 1
+√100 = 10 = 10 + 0
+√1296 = 36 = 1 + 29 + 6
+√2025 = 45 = 20 + 25
+√3025 = 55 = 30 + 25
+√6724 = 82 = 6 + 72 + 4
+√8281 = 91 = 82 + 8 + 1
+√9801 = 99 = 98 + 0 + 1
+√10000 = 100 = 100 + 0 + 0
 
 T = 41333
 
