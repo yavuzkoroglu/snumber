@@ -50,8 +50,10 @@ static void constructInitial_split(Split* const split, int const nDigits) {
         split->slots[slotId] = 1;
 }
 
-static int countDigits(uint64_t x) {
-    int count = 1;
+static int countDigits(uint64_t const x) {
+    int count = MAX_DIGITS - 1;
+    while (x < pow_ten[count])
+        count >>= 1;
     while (x >= pow_ten[count])
         count++;
     return count;
@@ -59,12 +61,13 @@ static int countDigits(uint64_t x) {
 
 static void dumpProof(uint64_t s, uint64_t const x, Split const* const split, int nDigits) {
     printf("√%"PRIu64" = %"PRIu64" = ", s, x);
-
-    uint64_t base = pow_ten[(nDigits -= split->slots[split->nSlots - 1])];
-    printf("%.*"PRIu64, split->slots[split->nSlots - 1], s / base);
-    s %= base;
+    {
+        uint64_t const base = pow_ten[(nDigits -= split->slots[split->nSlots - 1])];
+        printf("%.*"PRIu64, split->slots[split->nSlots - 1], s / base);
+        s %= base;
+    }
     for (int slotId = split->nSlots - 2; slotId >= 0; slotId--) {
-        base = pow_ten[(nDigits -= split->slots[slotId])];
+        uint64_t const base = pow_ten[(nDigits -= split->slots[slotId])];
         printf(" + %.*"PRIu64, split->slots[slotId], s / base);
         s %= base;
     }
