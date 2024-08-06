@@ -2,6 +2,7 @@ include padkit/compile.mk
 
 INCLUDES=-Iinclude -Ipadkit/include
 OBJECTS=obj/snumber.o
+MODE=release
 
 all: bin/snumber
 
@@ -13,8 +14,7 @@ bin/snumber:                      		\
     bin                                 \
     objects                             \
     padkit/compile.mk                   \
-    padkit/lib/libpadkit.a              \
-	; ${COMPILE} ${OBJECTS} padkit/lib/libpadkit.a -o bin/snumber
+	; ${COMPILE} ${OBJECTS} -o bin/snumber
 
 clean: ; rm -rf obj bin padkit *.gcno *.gcda *.gcov html latex
 

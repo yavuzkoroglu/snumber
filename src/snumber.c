@@ -1,5 +1,4 @@
 #include <inttypes.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +43,7 @@ static void dumpProof(uint64_t s, uint64_t const x, Split const* const split, in
     uint64_t base = 1;
     REPEAT(nDigits) base *= 10;
     REPEAT(split->slots[split->nSlots - 1]) base /= 10;
-    printf("%"PRIu64, s / base);
+    printf("%.*"PRIu64, split->slots[split->nSlots - 1], s / base);
     s %= base;
     for (int slotId = split->nSlots - 2; slotId >= 0; slotId--) {
         REPEAT(split->slots[slotId]) base /= 10;
@@ -56,7 +55,7 @@ static void dumpProof(uint64_t s, uint64_t const x, Split const* const split, in
 
 static uint64_t sumSplit(Split const* const split, uint64_t s) {
     uint64_t sum = 0;
-    for (int slotId = split->nSlots - 1; slotId >= 0; slotId--) {
+    for (int slotId = 0; slotId < split->nSlots; slotId++) {
         uint64_t base = 1;
         REPEAT(split->slots[slotId]) base *= 10;
         sum += s % base;
