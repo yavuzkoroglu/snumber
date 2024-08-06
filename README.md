@@ -25,7 +25,9 @@ Let T(N) be the sum of all S-numbers up to N. T(10<sup>12</sup>) = ?
 
 ### The Answer
 
-This implementation proved to be too slow to compute the answer.
+T(10<sup>12</sup>) = 128088830547982
+
+The proof is located at `t12.txt`.
 
 ## How to Build
 
