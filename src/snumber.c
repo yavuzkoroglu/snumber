@@ -32,10 +32,12 @@ static void computeSplits(uint64_t* const splits, unsigned const nDigits, unsign
     for (unsigned slotId = 0; slotId < nDigits; slotId++)
         splits[0] += pow[nDigits][slotId];
 
+    uint64_t delta = pow[nDigits][nDigits - 2] * (nDigits - 1);
     for (unsigned splitId = 1; splitId < nSplits; splitId++) {
-        splits[splitId] = splits[splitId - 1] - 1;
+        splits[splitId] = splits[splitId - 1] - delta;
         while (!checkSplit(splits[splitId], nDigits))
-            splits[splitId]--;
+            splits[splitId] -= delta;
+        delta = (delta > nDigits - 1) ? delta / nDigits : nDigits - 1;
     }
 }
 
