@@ -50,20 +50,22 @@ static unsigned countDigits(uint64_t const x) {
 }
 
 static void dumpSplit(uint64_t s, uint64_t split, unsigned const nDigits) {
-    uint64_t slots[MAX_SLOTS + 1];
+    uint64_t slot_values[MAX_SLOTS + 1];
+    unsigned slot_nDigits[MAX_SLOTS + 1];
 
     unsigned slotId = 0;
     while (split > 0) {
-        uint64_t const slot_nDigits = split % nDigits;
-        uint64_t const base         = pow[10][slot_nDigits];
-        slots[slotId++] = s % base;
+        slot_nDigits[slotId]    = split % nDigits;
+        uint64_t const base     = pow[10][slot_nDigits[slotId]];
+        slot_values[slotId++]   = s % base;
         s /= base;
         split /= nDigits;
     }
 
-    printf("%"PRIu64, slots[--slotId]);
-    while (slotId > 0)
-        printf(" + %"PRIu64, slots[--slotId]);
+    slotId--;
+    printf("%0*"PRIu64, slot_nDigits[slotId], slot_values[slotId]);
+    while (slotId-- > 0)
+        printf(" + %0*"PRIu64, slot_nDigits[slotId], slot_values[slotId]);
     puts("");
 }
 
@@ -93,7 +95,7 @@ static uint64_t sumSplit(uint64_t s, uint64_t split, unsigned const nDigits) {
     uint64_t sum = 0;
 
     while (split > 0) {
-        uint64_t const slot_nDigits = split % nDigits;
+        unsigned const slot_nDigits = split % nDigits;
         uint64_t const base         = pow[10][slot_nDigits];
         sum += s % base;
         s /= base;
