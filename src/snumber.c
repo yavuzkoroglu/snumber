@@ -9,10 +9,12 @@
 
 #define COUNT_SPLITS(nDigits) ((1 << (nDigits - 1)) - 1)
 
-static uint64_t pow[MAX_DIGITS + 1][MAX_DIGITS];
 static uint64_t n_choose_r[MAX_DIGITS][MAX_DIGITS];
+static uint64_t pow[MAX_DIGITS + 1][MAX_DIGITS];
 
-static void computeSplits(uint64_t* const splits, unsigned const nDigits) {
+static void dumpSplit(uint64_t s, uint64_t split, unsigned const nDigits);
+
+static void computeSplits(uint64_t* const splits, unsigned const nDigits, unsigned const nSplits) {
     unsigned nSlots = nDigits;
     splits[0] = 0;
     for (unsigned slotId = 0; slotId < nSlots; slotId++)
@@ -22,16 +24,35 @@ static void computeSplits(uint64_t* const splits, unsigned const nDigits) {
     unsigned splitId        = 1;
     unsigned groupId        = 0;
     unsigned shift_amount   = 1;
+    unsigned amount         = 1;
     while (nSlots > 2) {
-        splits[splitId] = splits[old_splitId] - pow[nDigits][nSlots - 1] + pow[nDigits][nSlots - 1 - shift_amount];
+        splits[splitId] = splits[old_splitId] - amount * pow[nDigits][nSlots - 1] + amount * pow[nDigits][nSlots - 1 - shift_amount];
         if (++shift_amount == nSlots) {
             if (splits[splitId] < pow[nDigits][nSlots - 1] << 1) {
                 nSlots--;
                 old_splitId += n_choose_r[nDigits - 1][groupId++] + 1;
+                amount = 1;
+            } else {
+                amount++;
             }
             shift_amount = 1;
         }
         splitId++;
+    }
+
+    if (splitId != nSplits) {
+        uint64_t s = 0;
+        for (unsigned i = 0; i < nDigits; i++)
+            s += pow[10][i];
+
+        puts("");
+        for (unsigned i = 0; i < splitId; i++) {
+            dumpSplit(s, splits[i], nDigits);
+        }
+        puts("");
+
+        free(splits);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -69,16 +90,6 @@ static void dumpSplit(uint64_t s, uint64_t split, unsigned const nDigits) {
     puts("");
 }
 
-static void fillAll_pow(unsigned const max_b, unsigned const max_p) {
-    for (unsigned b = 0; b <= max_b; b++) {
-        pow[b][0] = 1;
-
-        uint64_t b_to_p_power = 1;
-        for (unsigned p = 1; p <= max_p; p++)
-            pow[b][p] = (b_to_p_power *= b);
-    }
-}
-
 static void fillAll_n_choose_r(unsigned const max_n) {
     n_choose_r[0][0] = 1;
     n_choose_r[1][0] = 1;
@@ -88,6 +99,16 @@ static void fillAll_n_choose_r(unsigned const max_n) {
         n_choose_r[n][n] = 1;
         for (unsigned r = 1; r < n; r++)
             n_choose_r[n][r] = n_choose_r[n - 1][r - 1] + n_choose_r[n - 1][r];
+    }
+}
+
+static void fillAll_pow(unsigned const max_b, unsigned const max_p) {
+    for (unsigned b = 0; b <= max_b; b++) {
+        pow[b][0] = 1;
+
+        uint64_t b_to_p_power = 1;
+        for (unsigned p = 1; p <= max_p; p++)
+            pow[b][p] = (b_to_p_power *= b);
     }
 }
 
@@ -134,7 +155,7 @@ int main(int argc, char* argv[]) {
         if (new_nDigits > nDigits) {
             nDigits = new_nDigits;
             nSplits = COUNT_SPLITS(nDigits);
-            computeSplits(splits, nDigits);
+            computeSplits(splits, nDigits, nSplits);
         }
 
         for (unsigned splitId = 0; splitId < nSplits; splitId++) {
