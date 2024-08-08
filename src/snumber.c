@@ -9,8 +9,6 @@
 
 #define COUNT_SPLITS(nDigits) ((1 << (nDigits - 1)) - 1)
 
-/* #define MAX_SPLITS COUNT_SPLITS(MAX_DIGITS) */
-
 static uint64_t pow[MAX_DIGITS + 1][MAX_DIGITS];
 
 static uint64_t n_choose_r[MAX_DIGITS + 1][MAX_DIGITS + 1];
@@ -54,17 +52,6 @@ static unsigned countDigits(uint64_t const x) {
 
     return r;
 }
-
-/*
-static unsigned countSlots(uint64_t split, unsigned const nDigits) {
-    unsigned count = 0;
-    while (split > 0) {
-        count++;
-        split /= nDigits;
-    }
-    return count;
-}
-*/
 
 static void dumpSplit(uint64_t s, uint64_t split, unsigned const nDigits) {
     uint64_t slots[MAX_SLOTS + 1];
