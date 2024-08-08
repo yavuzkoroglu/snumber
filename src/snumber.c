@@ -10,32 +10,28 @@
 #define COUNT_SPLITS(nDigits) ((1 << (nDigits - 1)) - 1)
 
 static uint64_t pow[MAX_DIGITS + 1][MAX_DIGITS];
+static uint64_t n_choose_r[MAX_DIGITS][MAX_DIGITS];
 
-static uint64_t n_choose_r[MAX_DIGITS + 1][MAX_DIGITS + 1];
-
-static bool checkSplit(uint64_t split, unsigned const true_nDigits) {
-    unsigned nDigits = 0;
-    while (split > 0) {
-        uint64_t const slot_nDigits = split % true_nDigits;
-        if (slot_nDigits == 0) return 0;
-        nDigits += slot_nDigits;
-        split /= true_nDigits;
-    }
-
-    return nDigits == true_nDigits;
-}
-
-static void computeSplits(uint64_t* const splits, unsigned const nDigits, unsigned const nSplits) {
+static void computeSplits(uint64_t* const splits, unsigned const nDigits) {
+    unsigned nSlots = nDigits;
     splits[0] = 0;
-    for (unsigned slotId = 0; slotId < nDigits; slotId++)
+    for (unsigned slotId = 0; slotId < nSlots; slotId++)
         splits[0] += pow[nDigits][slotId];
 
-    uint64_t delta = pow[nDigits][nDigits - 2] * (nDigits - 1);
-    for (unsigned splitId = 1; splitId < nSplits; splitId++) {
-        splits[splitId] = splits[splitId - 1] - delta;
-        while (!checkSplit(splits[splitId], nDigits))
-            splits[splitId] -= delta;
-        delta = (delta > nDigits - 1) ? delta / nDigits : nDigits - 1;
+    unsigned old_splitId    = 0;
+    unsigned splitId        = 1;
+    unsigned groupId        = 0;
+    unsigned shift_amount   = 1;
+    while (nSlots > 2) {
+        splits[splitId] = splits[old_splitId] - pow[nDigits][nSlots - 1] + pow[nDigits][nSlots - 1 - shift_amount];
+        if (++shift_amount == nSlots) {
+            if (splits[splitId] < pow[nDigits][nSlots - 1] << 1) {
+                nSlots--;
+                old_splitId += n_choose_r[nDigits - 1][groupId++] + 1;
+            }
+            shift_amount = 1;
+        }
+        splitId++;
     }
 }
 
@@ -71,18 +67,6 @@ static void dumpSplit(uint64_t s, uint64_t split, unsigned const nDigits) {
     puts("");
 }
 
-static void fillAll_n_choose_r(int const max_n) {
-    n_choose_r[0][0] = 1;
-    n_choose_r[1][0] = 1;
-    n_choose_r[1][1] = 1;
-    for (int n = 2; n <= max_n; n++) {
-        n_choose_r[n][0] = 1;
-        n_choose_r[n][n] = 1;
-        for (int r = 1; r < n; r++)
-            n_choose_r[n][r] = n_choose_r[n - 1][r] + n_choose_r[n - 1][r - 1];
-    }
-}
-
 static void fillAll_pow(unsigned const max_b, unsigned const max_p) {
     for (unsigned b = 0; b <= max_b; b++) {
         pow[b][0] = 1;
@@ -90,6 +74,18 @@ static void fillAll_pow(unsigned const max_b, unsigned const max_p) {
         uint64_t b_to_p_power = 1;
         for (unsigned p = 1; p <= max_p; p++)
             pow[b][p] = (b_to_p_power *= b);
+    }
+}
+
+static void fillAll_n_choose_r(unsigned const max_n) {
+    n_choose_r[0][0] = 1;
+    n_choose_r[1][0] = 1;
+    n_choose_r[1][1] = 1;
+    for (unsigned n = 2; n <= max_n; n++) {
+        n_choose_r[n][0] = 1;
+        n_choose_r[n][n] = 1;
+        for (unsigned r = 1; r < n; r++)
+            n_choose_r[n][r] = n_choose_r[n - 1][r - 1] + n_choose_r[n - 1][r];
     }
 }
 
@@ -111,7 +107,7 @@ int main(int argc, char* argv[]) {
     puts("");
 
     fillAll_pow(MAX_DIGITS, MAX_DIGITS - 1);
-    fillAll_n_choose_r(MAX_DIGITS);
+    fillAll_n_choose_r(MAX_DIGITS - 1);
 
     if (argc < 2) {
         printf(" Usage: %s <N>\n\n", argv[0]);
@@ -136,7 +132,7 @@ int main(int argc, char* argv[]) {
         if (new_nDigits > nDigits) {
             nDigits = new_nDigits;
             nSplits = COUNT_SPLITS(nDigits);
-            computeSplits(splits, nDigits, nSplits);
+            computeSplits(splits, nDigits);
         }
 
         for (unsigned splitId = 0; splitId < nSplits; splitId++) {
