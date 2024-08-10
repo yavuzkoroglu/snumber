@@ -11,6 +11,6 @@ SILENCED_WARNINGS=-Wno-nullability-completeness -Wno-unsafe-buffer-usage -Wno-de
 bin/snumber:		\
     bin   			\
 	src/snumber.c	\
-	; ${CC} -std=c99 -g -Weverything ${SILENCED_WARNINGS} src/snumber.c -o bin/snumber
+	; ${CC} -std=c99 -Ofast -DNDEBUG -Weverything ${SILENCED_WARNINGS} src/snumber.c -o bin/snumber
 
 clean: ; rm -rf bin
