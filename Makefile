@@ -6,7 +6,7 @@ all: clean bin/snumber
 
 bin: ; mkdir bin
 
-SILENCED_WARNINGS=-Wno-nullability-completeness -Wno-unsafe-buffer-usage -Wno-declaration-after-statement -Wno-padded
+SILENCED_WARNINGS=-Wno-unknown-warning-option -Wno-nullability-completeness -Wno-unsafe-buffer-usage -Wno-declaration-after-statement -Wno-padded
 
 bin/snumber:		\
     bin   			\
