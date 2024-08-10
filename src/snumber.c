@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
 
     /* Check all perfect squares. */
     uint64_t t = 0;
-    for (uint64_t s, x = 9; (s = x*x) <= max_s; x++) {
+    for (uint64_t s, x = 4; (s = x*x) <= max_s; x++) {
         uint32_t const nDigits  = countDigits(s);
         uint32_t const nSplits  = COUNT_SPLITS(nDigits);
 
