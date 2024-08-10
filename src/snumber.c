@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
             splitId < prev_nSplits;
             splitId++, splitId2++
         ) {
-            uint8_t const prev_nSlots = splits[nDigits - 1][splitId][0];
+            uint8_t const prev_nSlots   = splits[nDigits - 1][splitId][0];
             splits[nDigits][splitId]    = malloc((size_t)(prev_nSlots + 2) * sizeof(uint8_t));
             splits[nDigits][splitId2]   = malloc((size_t)(prev_nSlots + 1) * sizeof(uint8_t));
             memcpy( splits[nDigits][splitId], splits[nDigits - 1][splitId], prev_nSlots + 1);
